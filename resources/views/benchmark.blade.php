@@ -360,18 +360,46 @@
         <!-- SECTION 3: Prompt Editor & Run Controls -->
         <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm transition space-y-4">
             <!-- System Prompt (Collapsible) -->
-            <div x-data="{ openSystem: false }">
-                <button 
-                    type="button" 
-                    @click="openSystem = !openSystem" 
-                    class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 transition"
-                >
-                    <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
-                    <span>System Prompt</span>
-                    <span class="text-slate-400 font-normal lowercase">(optional instructions)</span>
-                    <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" :class="openSystem ? 'rotate-180' : ''"></i>
-                </button>
-                <div x-show="openSystem" x-cloak class="mt-2">
+            <div>
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <button 
+                        type="button" 
+                        @click="openSystem = !openSystem" 
+                        class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 transition"
+                    >
+                        <i data-lucide="terminal" class="w-3.5 h-3.5 text-indigo-500"></i>
+                        <span>System Prompt</span>
+                        <span class="text-slate-400 font-normal lowercase">(optional persona/instructions)</span>
+                        <i data-lucide="chevron-down" class="w-3 h-3 transition-transform" :class="openSystem ? 'rotate-180' : ''"></i>
+                    </button>
+
+                    <!-- System Prompt Demo Pills -->
+                    <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                        <span class="text-[11px] font-semibold text-slate-400 hidden sm:inline-flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3 h-3 text-indigo-400"></i> Demo Personas:
+                        </span>
+                        <template x-for="item in demoSystemPrompts" :key="item.id">
+                            <button 
+                                type="button" 
+                                @click="setSystemPrompt(item.prompt)"
+                                class="px-2 py-0.5 rounded-lg text-[11px] font-medium border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition shadow-2xs"
+                                :title="item.prompt"
+                                x-text="item.label"
+                            ></button>
+                        </template>
+                        <button 
+                            type="button" 
+                            x-show="systemPrompt" 
+                            @click="systemPrompt = ''" 
+                            class="px-2 py-0.5 rounded-lg text-[11px] text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                            title="Clear System Prompt"
+                        >
+                            ✕ Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div x-show="openSystem" x-cloak class="mt-1">
                     <textarea 
                         x-model="systemPrompt" 
                         rows="2" 
@@ -382,13 +410,62 @@
             </div>
 
             <!-- User Prompt Textarea -->
-            <div class="space-y-1.5">
-                <div class="flex justify-between items-center text-xs">
-                    <label class="font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                        Prompt <span class="text-rose-500">*</span>
-                    </label>
-                    <span class="text-slate-400 text-[11px]">Press <kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Ctrl + Enter</kbd> to run</span>
+            <div class="space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2">
+                        <label class="font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+                            <i data-lucide="message-square" class="w-3.5 h-3.5 text-brand-500"></i>
+                            <span>Prompt</span> <span class="text-rose-500">*</span>
+                        </label>
+                    </div>
+
+                    <!-- Paired Scenario Combo & Shortcut -->
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 text-[11px] text-slate-500" x-show="demoPairedScenarios.length > 0">
+                            <label class="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                                <i data-lucide="layers" class="w-3 h-3 text-brand-500"></i> 1-Click Combo:
+                            </label>
+                            <select 
+                                @change="loadPairedScenario($event.target.value); $event.target.value = '';"
+                                class="text-[11px] py-0.5 pl-2 pr-6 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500 font-medium"
+                            >
+                                <option value="">-- Select Combo --</option>
+                                <template x-for="sc in demoPairedScenarios" :key="sc.id">
+                                    <option :value="sc.id" x-text="sc.label"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <span class="text-slate-400 text-[10px] hidden md:inline">Press <kbd class="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded text-[9px]">Ctrl + Enter</kbd> to run</span>
+                    </div>
                 </div>
+
+                <!-- User Prompt Demo Pills -->
+                <div class="flex flex-wrap items-center gap-1.5 text-xs pb-1">
+                    <span class="text-[11px] font-semibold text-slate-400 mr-0.5 flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3 h-3 text-amber-500"></i> Demo Prompts:
+                    </span>
+                    <template x-for="item in demoUserPrompts" :key="item.id">
+                        <button 
+                            type="button" 
+                            @click="setUserPrompt(item.prompt)"
+                            class="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition shadow-2xs flex items-center gap-1"
+                            :title="item.prompt"
+                        >
+                            <span class="text-[10px] opacity-75 font-mono text-brand-600 dark:text-brand-400" x-text="'[' + item.category + ']'"></span>
+                            <span x-text="item.label"></span>
+                        </button>
+                    </template>
+                    <button 
+                        type="button" 
+                        x-show="prompt" 
+                        @click="prompt = ''" 
+                        class="px-2 py-1 rounded-lg text-[11px] text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition"
+                        title="Clear Prompt"
+                    >
+                        ✕ Clear
+                    </button>
+                </div>
+
                 <textarea 
                     x-model="prompt" 
                     @keydown.ctrl.enter.prevent="executeTest()" 
@@ -679,12 +756,17 @@
                 strengthSuites: {},
 
                 systemPrompt: '',
+                openSystem: false,
                 prompt: 'Explain quantum computing in 2 simple sentences.',
                 temperature: 0.7,
                 maxTokens: '',
                 topP: 1.0,
                 streamEnabled: true,
                 showParams: false,
+
+                demoSystemPrompts: [],
+                demoUserPrompts: [],
+                demoPairedScenarios: [],
 
                 isRunning: false,
                 runningMessage: '',
@@ -718,6 +800,7 @@
                     this.applyTheme();
                     this.loadSavedEndpoints();
                     this.loadStrengthSuites();
+                    this.loadDemoPrompts();
                     if (this.baseUrl) {
                         this.fetchModels();
                     }
@@ -747,6 +830,41 @@
                         this.loadSuitePreset();
                     }
                     this.$nextTick(() => lucide.createIcons());
+                },
+
+                async loadDemoPrompts() {
+                    try {
+                        const res = await fetch('/api/benchmark/demo-prompts');
+                        const data = await res.json();
+                        if (data.success && data.demo_prompts) {
+                            this.demoSystemPrompts = data.demo_prompts.system_prompts || [];
+                            this.demoUserPrompts = data.demo_prompts.user_prompts || [];
+                            this.demoPairedScenarios = data.demo_prompts.paired_scenarios || [];
+                        }
+                    } catch (e) {
+                        console.error('Failed to load demo prompts', e);
+                    } finally {
+                        this.$nextTick(() => lucide.createIcons());
+                    }
+                },
+
+                setSystemPrompt(text) {
+                    this.systemPrompt = text;
+                    this.openSystem = true;
+                },
+
+                setUserPrompt(text) {
+                    this.prompt = text;
+                },
+
+                loadPairedScenario(id) {
+                    if (!id) return;
+                    const sc = this.demoPairedScenarios.find(s => s.id === id);
+                    if (sc) {
+                        this.systemPrompt = sc.system_prompt;
+                        this.prompt = sc.prompt;
+                        this.openSystem = true;
+                    }
                 },
 
                 async loadStrengthSuites() {

@@ -63,6 +63,17 @@ class BenchmarkController extends Controller
     }
 
     /**
+     * Get categorized demo prompts for system and user prompts.
+     */
+    public function getDemoPrompts(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'demo_prompts' => $this->benchmarkService->getDemoPrompts(),
+        ]);
+    }
+
+    /**
      * Get past benchmark runs history.
      */
     public function getHistory(): JsonResponse

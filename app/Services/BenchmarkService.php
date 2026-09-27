@@ -71,6 +71,140 @@ class BenchmarkService
     }
 
     /**
+     * Get categorized demo prompts for system prompts, user prompts, and paired scenarios.
+     *
+     * @return array{
+     *     system_prompts: list<array{id: string, label: string, icon: string, prompt: string}>,
+     *     user_prompts: list<array{id: string, label: string, icon: string, prompt: string, category: string}>,
+     *     paired_scenarios: list<array{id: string, label: string, icon: string, system_prompt: string, prompt: string}>
+     * }
+     */
+    public function getDemoPrompts(): array
+    {
+        return [
+            'system_prompts' => [
+                [
+                    'id' => 'senior_architect',
+                    'label' => 'Senior Architect',
+                    'icon' => 'code',
+                    'prompt' => 'You are an expert Principal Software Engineer. Write clean, idiomatic, type-hinted code with optimal time and space complexity, following SOLID principles and zero duplicate logic.',
+                ],
+                [
+                    'id' => 'logic_tutor',
+                    'label' => 'Logic Tutor',
+                    'icon' => 'brain',
+                    'prompt' => 'You are a rigorous analytical logic assistant. Break down problems systematically, evaluate premises, and provide clear step-by-step mathematical reasoning.',
+                ],
+                [
+                    'id' => 'strict_json',
+                    'label' => 'Strict JSON Bot',
+                    'icon' => 'database',
+                    'prompt' => 'You are an automated API parser. Return ONLY valid parseable JSON adhering strictly to the requested schema. Do not output markdown code fences, backticks, conversational preamble, or explanations.',
+                ],
+                [
+                    'id' => 'bangla_expert',
+                    'label' => 'Bangla Linguist',
+                    'icon' => 'languages',
+                    'prompt' => 'আপনি একজন প্রফেশনাল বাংলা ভাষা বিশেষজ্ঞ ও অনুবাদক। টেকনিক্যাল ও কম্পিউটার সায়েন্সের জটিল বিষয়বস্তু সহজ, স্বাভাবিক এবং মানসম্মত প্রাতিষ্ঠানিক বাংলায় ব্যাখ্যা ও অনুবাদ করুন।',
+                ],
+                [
+                    'id' => 'security_auditor',
+                    'label' => 'Security Auditor',
+                    'icon' => 'shield-alert',
+                    'prompt' => 'You are a seasoned Application Security (AppSec) auditor. Analyze code and architecture for vulnerabilities, injection vectors, OWASP Top 10 risks, and suggest secure parameterized remediation.',
+                ],
+                [
+                    'id' => 'concise_minimal',
+                    'label' => 'Minimalist',
+                    'icon' => 'zap',
+                    'prompt' => 'Be extremely concise and direct. Deliver the exact answer or code required with zero introductory remarks, fluff, or polite conversational fillers.',
+                ],
+            ],
+            'user_prompts' => [
+                [
+                    'id' => 'logic_sally',
+                    'label' => 'Sally\'s Sisters',
+                    'icon' => 'help-circle',
+                    'category' => 'Logic',
+                    'prompt' => 'Sally has 3 brothers. Each brother has 2 sisters. How many sisters does Sally have in total? Explain your deduction step by step.',
+                ],
+                [
+                    'id' => 'code_palindrome',
+                    'label' => 'PHP Algorithm',
+                    'icon' => 'terminal',
+                    'category' => 'Coding',
+                    'prompt' => 'Write a clean PHP 8.5 function `longestPalindrome(string $s): string` that finds the longest palindromic substring in O(n^2) or better time complexity. Include strict types, docblock, and handle multibyte UTF-8 characters safely.',
+                ],
+                [
+                    'id' => 'constraint_lipogram',
+                    'label' => 'No "E" Lipogram',
+                    'icon' => 'ban',
+                    'category' => 'Constraint',
+                    'prompt' => 'Write a short 3-sentence paragraph describing the ocean without using the letter "e" (uppercase or lowercase) anywhere in your entire response. Count each sentence.',
+                ],
+                [
+                    'id' => 'json_schema_eval',
+                    'label' => 'JSON Extraction',
+                    'icon' => 'braces',
+                    'category' => 'JSON',
+                    'prompt' => 'Produce a valid JSON object with the following exact keys: "benchmark_version" (string "1.0"), "model_capabilities" (array of 3 distinct strings), and "metrics" (object containing "tps": float, "reliability_score": integer between 1 and 100).',
+                ],
+                [
+                    'id' => 'speed_count',
+                    'label' => 'Speed Benchmark',
+                    'icon' => 'gauge',
+                    'category' => 'Speed',
+                    'prompt' => 'Count from 1 to 100 separated by single spaces. Output only the numbers, nothing else.',
+                ],
+                [
+                    'id' => 'bangla_translation',
+                    'label' => 'Bangla Translation',
+                    'icon' => 'book-open',
+                    'category' => 'Language',
+                    'prompt' => 'Translate this technical architecture sentence into fluent, professional Bengali (বাংলা): "Zero-downtime rolling deployment with database lock mitigation ensures uninterrupted enterprise SaaS operations."',
+                ],
+                [
+                    'id' => 'security_audit_sql',
+                    'label' => 'SQL Injection Audit',
+                    'icon' => 'shield-check',
+                    'category' => 'Security',
+                    'prompt' => 'Audit this PHP query for SQL injection vulnerabilities and provide the secure refactored code using Laravel Eloquent PDO parameter bindings: `SELECT * FROM users WHERE email = \'$email\' AND active = 1`',
+                ],
+            ],
+            'paired_scenarios' => [
+                [
+                    'id' => 'scenario_code',
+                    'label' => 'Code Optimization & Review',
+                    'icon' => 'cpu',
+                    'system_prompt' => 'You are an expert Principal Software Engineer. Write clean, idiomatic, type-hinted code with optimal time and space complexity, following SOLID principles and zero duplicate logic.',
+                    'prompt' => 'Write a clean PHP 8.5 function `longestPalindrome(string $s): string` that finds the longest palindromic substring in O(n^2) or better time complexity. Include strict types, docblock, and handle multibyte UTF-8 characters safely.',
+                ],
+                [
+                    'id' => 'scenario_logic',
+                    'label' => 'Multi-step Logic Puzzle',
+                    'icon' => 'puzzle',
+                    'system_prompt' => 'You are a rigorous analytical logic assistant. Break down problems systematically, evaluate premises, and provide clear step-by-step mathematical reasoning.',
+                    'prompt' => 'Sally has 3 brothers. Each brother has 2 sisters. How many sisters does Sally have in total? Explain your deduction step by step.',
+                ],
+                [
+                    'id' => 'scenario_json',
+                    'label' => 'Strict JSON API Response',
+                    'icon' => 'file-code',
+                    'system_prompt' => 'You are an automated API parser. Return ONLY valid parseable JSON adhering strictly to the requested schema. Do not output markdown code fences, backticks, conversational preamble, or explanations.',
+                    'prompt' => 'Produce a valid JSON object with the following exact keys: "benchmark_version" (string "1.0"), "model_capabilities" (array of 3 distinct strings), and "metrics" (object containing "tps": float, "reliability_score": integer between 1 and 100).',
+                ],
+                [
+                    'id' => 'scenario_bangla',
+                    'label' => 'Bengali Technical Localization',
+                    'icon' => 'languages',
+                    'system_prompt' => 'আপনি একজন প্রফেশনাল বাংলা ভাষা বিশেষজ্ঞ ও অনুবাদক। টেকনিক্যাল ও কম্পিউটার সায়েন্সের জটিল বিষয়বস্তু সহজ, স্বাভাবিক এবং মানসম্মত প্রাতিষ্ঠানিক বাংলায় ব্যাখ্যা ও অনুবাদ করুন।',
+                    'prompt' => 'Translate this technical architecture sentence into fluent, professional Bengali (বাংলা): "Zero-downtime rolling deployment with database lock mitigation ensures uninterrupted enterprise SaaS operations."',
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Run a benchmark test for a single model or multiple models.
      *
      * @param  array{

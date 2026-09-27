@@ -18,6 +18,7 @@ Route::prefix('benchmark')->group(function () {
     Route::post('/run', [BenchmarkController::class, 'runBenchmark']);
     Route::post('/stream', [BenchmarkController::class, 'streamPrompt']);
     Route::get('/suites', [BenchmarkController::class, 'getStrengthSuites']);
+    Route::get('/demo-prompts', [BenchmarkController::class, 'getDemoPrompts']);
     Route::get('/history', [BenchmarkController::class, 'getHistory']);
     Route::delete('/history', [BenchmarkController::class, 'clearHistory']);
     Route::delete('/history/{benchmarkRun}', [BenchmarkController::class, 'deleteRun']);

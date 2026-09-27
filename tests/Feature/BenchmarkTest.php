@@ -30,6 +30,23 @@ class BenchmarkTest extends TestCase
             ]);
     }
 
+    public function test_it_returns_demo_prompts(): void
+    {
+        $response = $this->getJson('/api/benchmark/demo-prompts');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ])
+            ->assertJsonStructure([
+                'demo_prompts' => [
+                    'system_prompts',
+                    'user_prompts',
+                    'paired_scenarios',
+                ],
+            ]);
+    }
+
     public function test_it_executes_benchmark_and_records_results(): void
     {
         Http::fake([
